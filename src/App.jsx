@@ -41,8 +41,8 @@ export default function App() {
     if (ticket) {
       const timer = setTimeout(() => {
         setTicket("");
+        setIsClicked(false);
       }, 5000);
-      setIsClicked(false);
       return () => clearTimeout(timer);
     }
   }, [ticket]);
