@@ -1,5 +1,6 @@
 import { useState, useEffect, use} from "react";
 import "./App.css";
+import { ArrowRightFill } from '@imaimai17468/digital-agency-icons-react';
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxeZNwir5wTo13WBxOehhnl1S7Ud90QhUZEuvPVn0u2L_KRY7UE5tLDzj-chKNoei_bog/exec";
 // ↑ あなたのデプロイ済みApps ScriptのURLに変更してください
@@ -67,7 +68,7 @@ export default function App() {
           onChange={(e) => setAmount(e.target.value)}
           required
         />
-        <button type="submit" disabled={isClicked}>送信</button>
+        <button type="submit" disabled={isClicked}>送信<ArrowRightFill size={16} /></button>
       </form>
       {ticket && <p className="result">{ticket}</p>}
     </div>
