@@ -1,4 +1,4 @@
-import { useState, useEffect, use} from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxeZNwir5wTo13WBxOehhnl1S7Ud90QhUZEuvPVn0u2L_KRY7UE5tLDzj-chKNoei_bog/exec";
@@ -9,6 +9,20 @@ export default function App() {
   const [amount, setAmount] = useState("");
   const [ticket, setTicket] = useState("");
   const [isClicked, setIsClicked] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    // ローカルストレージからダークモード設定を読み込み
+    const saved = localStorage.getItem('darkMode');
+    const darkMode = saved ? JSON.parse(saved) : false;
+    
+    // 初期読み込み時にbodyクラスを設定
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+    
+    return darkMode;
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,9 +61,34 @@ export default function App() {
     }
   }, [ticket]);
 
+  // ダークモード設定をローカルストレージに保存
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+    // bodyクラスを切り替え
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   return (
-    <div className="app">
-      <h1>108在庫管理システム</h1>
+    <div className={`app ${isDarkMode ? 'dark-mode' : ''}`}>
+      <div className="header" onDoubleClick={toggleDarkMode}>
+        <h1>108在庫管理システム</h1>
+        <button 
+          type="button" 
+          className="dark-mode-toggle visually-hidden" 
+          onClick={toggleDarkMode}
+          aria-label="ダークモード切り替え"
+        >
+          {isDarkMode ? '☀️' : '🌙'}
+        </button>
+      </div>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
