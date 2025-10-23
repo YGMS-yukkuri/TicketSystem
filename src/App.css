@@ -17,7 +17,7 @@ form {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 260px;
+  width: 30vh;
   background: white;
   padding: 24px;
   border-radius: 12px;
@@ -51,6 +51,14 @@ button:hover {
   background-color: #005fcc;
 }
 
+select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: white;
+  cursor: pointer;
+}
 .result {
   margin-top: 20px;
   font-size: 18px;
