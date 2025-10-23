@@ -41,8 +41,8 @@ export default function App() {
     } catch (err) {
       console.error(err);
       setTicket("通信エラーが発生しました。");
-      // エラー時もスピナーを止める（ボタンは無効のまま）
       setIsLoading(false);
+      setIsDisabled(false); // エラー時はボタンを再度有効化
     }
   };
 
