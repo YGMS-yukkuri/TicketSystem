@@ -11,13 +11,15 @@
 h1 {
   margin-bottom: 16px;
   color: #333;
+  font-size: min(7vw, 50px);
+  max-lines: 32px;
 }
 
 form {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 40vh;
+  width: 50vw;
   min-width: 300px;
   background: white;
   padding: 30px;
