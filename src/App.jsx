@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { ArrowRightFill } from '@imaimai17468/digital-agency-icons-react';
 
@@ -10,11 +10,14 @@ export default function App() {
   const [amount, setAmount] = useState("");
   const [ticket, setTicket] = useState("");
   const [timeslot, setTimeslot] = useState("");
-  const [isClicked, setIsClicked] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsClicked(true);
+    // 送信開始：ボタンは無効のままにし、スピナーを表示
+    setIsDisabled(true);
+    setIsLoading(true);
 
 
     const params = new URLSearchParams();
@@ -33,10 +36,13 @@ export default function App() {
 
       const data = await res.json();
       setTicket(`${data.ticket}`);
+      // レスポンス受信時はスピナーを止めるが、ボタンは無効のままにする
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
       setTicket("通信エラーが発生しました。");
-      setIsClicked(false);
+      // エラー時もスピナーを止める（ボタンは無効のまま）
+      setIsLoading(false);
     }
   };
 
@@ -44,7 +50,8 @@ export default function App() {
     if (ticket) {
       const timer = setTimeout(() => {
         setTicket("");
-        setIsClicked(false);
+        // 一定時間後にボタンを再度有効化する
+        setIsDisabled(false);
       }, 5000);
       return () => clearTimeout(timer);
     }
@@ -61,14 +68,14 @@ export default function App() {
           onChange={(e) => setName(e.target.value)}
           required
         />
-        <select onChange={(e) => setAmount(e.target.value)} required>
-          <option value={""} selected disabled>制作する人数を選択</option>
+        <select value={amount} onChange={(e) => setAmount(e.target.value)} required>
+          <option value={""} disabled>制作する人数を選択</option>
           <option value={"1"}>1人</option>
           <option value={"2"}>2人</option>
           <option value={"3"}>3人</option>
         </select>
-        <select onChange={(e) => setTimeslot(e.target.value)} required>
-          <option value={""} selected disabled>整理券に記載された時間帯を選択</option>
+        <select value={timeslot} onChange={(e) => setTimeslot(e.target.value)} required>
+          <option value={""} disabled>整理券に記載された時間帯を選択</option>
           <optgroup label="金曜日">
             <option value={"F12:45~13:00"}>12:45~13:00</option>
             <option value={"F13:00~13:30"}>13:00~13:30</option>
@@ -90,7 +97,21 @@ export default function App() {
             <option value={"S14:00~"}>14:00~</option>
           </optgroup>
         </select>
-        <button type="submit" disabled={isClicked}>送信<ArrowRightFill size={16} /></button>
+        <button
+          type="submit"
+          disabled={isDisabled}
+          aria-busy={isLoading}
+          aria-disabled={isDisabled}
+        >
+          {isLoading ? (
+            <span className="btn-content">
+              <span className="spinner" aria-hidden="true"></span>
+              <span className="visually-hidden">送信中</span>
+            </span>
+          ) : (
+            <span className="btn-content">送信<ArrowRightFill size={16} /></span>
+          )}
+        </button>
       </form>
       {ticket && <p className="result">{ticket}</p>}
     </div>
