@@ -63,6 +63,7 @@ export default function App() {
           type="number"
           step="1"
           min="1"
+          max="5"
           placeholder="制作個数を入力"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
