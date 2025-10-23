@@ -54,7 +54,7 @@ export default function App() {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="名前を入力"
+          placeholder="ニックネームを入力"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
