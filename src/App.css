@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh;
   font-family: "Segoe UI", sans-serif;
   background: #f3f4f6;
 }
@@ -23,6 +23,10 @@ form {
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  /* ビューポート高さに応じて最大高さを設定し、内部スクロールを許可 */
+  max-height: calc(100vh - 120px);
+  overflow: auto;
 }
 
 input {
@@ -93,6 +97,20 @@ select {
   font-size: 16px;
   background-color: white;
   cursor: pointer;
+}
+.app:focus-within {
+  /* フォーム内でフォーカスがある場合、スクロールバー出現によるレイアウト崩れを最小化 */
+  align-items: center;
+}
+
+/* モバイル向け調整 */
+@media (max-width: 420px) {
+  form {
+    width: calc(100% - 40px);
+    min-width: unset;
+    padding: 20px;
+    margin: 16px;
+  }
 }
 .result {
   margin-top: 20px;
