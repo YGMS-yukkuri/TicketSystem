@@ -17,7 +17,7 @@ form {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 30vh;
+  width: 40vh;
   min-width: 300px;
   background: white;
   padding: 30px;
