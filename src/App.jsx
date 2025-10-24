@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
-import { ArrowRightFill, HelpLine } from '@imaimai17468/digital-agency-icons-react';
+import { ArrowRightFill, HelpLine, AttentionFill, AttentionLine, CompleteFill } from '@imaimai17468/digital-agency-icons-react';
 
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxeZNwir5wTo13WBxOehhnl1S7Ud90QhUZEuvPVn0u2L_KRY7UE5tLDzj-chKNoei_bog/exec";
 // ↑ あなたのデプロイ済みApps ScriptのURLに変更してください
@@ -12,6 +12,7 @@ export default function App() {
   const [timeslot, setTimeslot] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSent, setIsSent] = useState(false);
 
 
   // --- 追加: モーダル制御 ---
@@ -51,13 +52,24 @@ export default function App() {
     setIsDisabled(true);
     setIsLoading(true);
 
-
+    if (isSent) {
+      setTicket(
+        <>
+          <AttentionFill />
+          <span>この端末では既に整理券を取得しています。</span>
+        </>
+      );
+      setIsLoading(false);
+      setIsDisabled(false);
+      return;
+    }
     const params = new URLSearchParams();
     params.append("name", name);
     params.append("amount", amount);
     params.append("timeslot", timeslot);
 
     try {
+      setTicket("通信中...(3~5秒ほどかかります)");
       const res = await fetch(GAS_URL, {
         method: "POST",
         headers: {
@@ -67,14 +79,30 @@ export default function App() {
       });
 
       const data = await res.json();
-      setTicket(`${data.ticket}`);
+      if (data.success === false) {
+        setTicket(
+          <>
+            <AttentionFill />
+            <span>{data.ticket}</span>
+          </>
+        );
+      } else {
+        setTicket(
+          <>
+            <CompleteFill />
+            {data.ticket}
+          </>
+        );
+      }
       // レスポンス受信時はスピナーを止めるが、ボタンは無効のままにする
       setIsLoading(false);
+      setIsSent(true);
     } catch (err) {
       console.error(err);
       setTicket("通信エラーが発生しました。");
       setIsLoading(false);
       setIsDisabled(false); // エラー時はボタンを再度有効化
+      setIsSent(false);
     }
   };
 
@@ -84,15 +112,19 @@ export default function App() {
         setTicket("");
         // 一定時間後にボタンを再度有効化する
         setIsDisabled(false);
-      }, 5000);
+      }, 10000);
       return () => clearTimeout(timer);
     }
   }, [ticket]);
 
   return (
     <div className="app">
-      <h1>108整理券登録システム</h1>
+      <h1 onClick={() => setIsSent(false)}>整理券管理システム</h1>
       <form onSubmit={handleSubmit}>
+        <p>
+          <AttentionLine />
+          <span>待ち時間が発生した際は、ニックネームにて整理券の確認を行うため、記憶できるニックネームをご利用ください</span>
+        </p>
         <input
           type="text"
           placeholder="ニックネームを入力"
@@ -113,15 +145,7 @@ export default function App() {
         </div>
 
         <select value={timeslot} onChange={(e) => setTimeslot(e.target.value)} required>
-          <option value={""} disabled>整理券に記載された時間帯を選択</option>
-          <optgroup label="金曜日">
-            <option value={"Fri 12:45~13:00"}>12:45~13:00</option>
-            <option value={"Fri 13:00~13:30"}>13:00~13:30</option>
-            <option value={"Fri 13:30~14:00"}>13:30~14:00</option>
-            <option value={"Fri 14:00~14:30"}>14:00~14:30</option>
-            <option value={"Fri 14:30~15:00"}>14:30~15:00</option>
-            <option value={"Fri 15:00~15:30"}>15:00~15:30</option>
-          </optgroup>
+          <option value={""} disabled>整理券-時間帯を選択</option>
           <optgroup label="土曜日">
             <option value={"Sat 9:30~10:00"}>9:30~10:00</option>
             <option value={"Sat 10:00~10:30"}>10:00~10:30</option>
